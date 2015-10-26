@@ -1,0 +1,29 @@
+% Exercise 8 Scratchpad
+
+% multivariateGaussian has some nice examples of vectorized code.
+
+
+% Part 4: Collaborative Filtering Gradient
+[J grad] = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, num_features, 0);
+
+% Part 5: Regularized cost
+[J grad] = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, num_features, 1.5);
+
+
+% Multivariate Gaussian Distribution (optional)
+% 2:01 Say we have too many dimensions in our data to visualize effectively. Would not the
+% anomalous cases remain apparent in a visualizable dataset
+% after applying some dimensionality reduction technique,
+% such as principal components analysis? Could this technique be used to target features
+% for use in situations wherein the univariate distribution would be much more desirable
+% to use than multivariate?
+
+% stdnormal_rnd(R, C) returns an R x C matrix of normally-distributed random numbers
+% with mean 0 & standard deviation 1.
+% http://www.gnu.org/software/octave/doc/interpreter/Random-Number-Generation.html
+
+X = stdnormal_rnd(10, 10);
+X(:,1) = X(:,1) * 1.2;
+X(:,3) = X(:,3) .^ 2;
+X(:,7) = X(:,7) - .7;
+X = [X; 1:10];

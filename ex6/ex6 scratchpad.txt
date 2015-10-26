@@ -1,0 +1,43 @@
+% Exercise 6 Scratchpad
+
+% Part 1
+x1 = [1 2 1]; x2 = [0 4 -1]; sigma = 2;
+sim = gaussianKernel(x1, x2, sigma);
+
+% What makes neural networks a good choice for what types of applications and what makes
+% SVMs a good choice for what other types of applications?
+
+
+% Part 2
+load('ex6data3.mat');
+
+A = [1 2 3; -4 -4 -5];
+
+[C, sigma] = dataset3Params(X, y, Xval, yval);
+
+temp = ds3PError(X, y, Xval, yval);
+
+
+
+% Part 3
+% Extract Features
+file_contents = readFile('emailSample1.txt');
+word_indices  = processEmail(file_contents);
+file_contents = readFile('emailSample1.txt');
+
+vtemp = {"hello" "world"}
+strcmp("world", vtemp)
+[x, xi] = max(strcmp("world", vtemp))
+% But what about when str is not in vocabList?
+strcmp("bob", vtemp)
+[x, xi] = max(strcmp("bob", vtemp))
+when x > 0, word_indices…
+
+
+word_indices  = processEmail(file_contents);
+
+
+% Part 4
+
+features = emailFeatures(word_indices);
+% It uses a for loop. How could I vectorize it?

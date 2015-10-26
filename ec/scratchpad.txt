@@ -1,0 +1,123 @@
+% Multivariate Gaussian Distribution (optional)
+% 2:01 Say we have too many dimensions in our data to visualize effectively. Would not the
+% anomalous cases remain apparent in a visualizable dataset
+% after applying some dimensionality reduction technique,
+% such as principal components analysis? Could this technique be used to target features
+% for use in situations wherein the univariate distribution would be much more desirable
+% to use than multivariate? In a word, "no."
+
+% stdnormal_rnd(R, C) returns an R x C matrix of normally-distributed random numbers
+% with mean 0 & standard deviation 1.
+% http://www.gnu.org/software/octave/doc/interpreter/Random-Number-Generation.html
+
+X = stdnormal_rnd(10, 10);
+X(:,1) = X(:,1) * 1.2;
+X(:,3) = X(:,3) .^ 2;
+X(:,7) = X(:,7) - .7;
+X = [X; [stdnormal_rnd(1,9) 10]];
+
+
+%  Before running PCA, it is important to first normalize X
+[X_norm, mu, sigma] = featureNormalize(X);
+
+%  Run PCA
+[U, S] = pca(X_norm);
+
+%  Project the data onto K = 2 dimensions
+K = 2;
+Z = projectData(X_norm, U, K);
+save z.txt Z
+
+% Cool! That totally showed up in a 2-dimensional plot!
+% Now rebuild the data to find which feature most predicts the anomalous case… 
+% Even though we're now using the univariate Gaussian distribution we should be just as
+% good at detecting anomalies due to previously unknown features, right?
+
+% Recover the normalized data
+X_rec  = recoverData(Z, U, K);
+% Find which feature had the anomalous value: Find index of the maximum of the column
+% maxima.
+[x, ix] = max(max(X_rec))
+% x =  1.9581
+% ix =  10
+
+
+
+% Now try it on a large scale.
+% I got out of memory errors with values of m=n ≥ 10,000
+% octave-3.4.0(57340,0xac00da28) malloc: *** mmap(size=800083968) failed (error code=12)
+% *** error: can't allocate region
+% *** set a breakpoint in malloc_error_break to debug
+% error: memory exhausted or requested size too large for range of Octave's index type -- trying to return to prompt
+
+X = stdnormal_rnd(5000, 5000);
+X(:,1) = X(:,1) * 1.2;
+X(:,3) = X(:,3) .^ 2;
+X(:,7) = X(:,7) - .7;
+X(:,10) = X(:,10) * 1.2;
+X(:,30) = X(:,30) .^ 2;
+X(:,70) = X(:,70) - .7;
+X(:,100) = X(:,100) * 1.2;
+X(:,300) = X(:,300) .^ 2;
+X(:,700) = X(:,700) - .7;
+X = [X; [stdnormal_rnd(1,4999) 10]];
+[X_norm, mu, sigma] = featureNormalize(X);
+% pca takes a really long time with m=n=5000, perhaps 20 minutes
+[U, S] = pca(X_norm);
+K = 2;
+Z = projectData(X_norm, U, K);
+save z.txt Z
+
+% The anomaly doesn't really show up any more in the graph. :(
+
+X_rec  = recoverData(Z, U, K);
+[x, ix] = max(max(X_rec))
+
+% And the maximum feature identified in the reconstructed data is not the anomaly. :(
+
+
+% Maybe I shouldn't've tried fooling with data that was random to begin with?
+X = stdnormal_rnd(5000, 5000);
+X = [X; [stdnormal_rnd(1,4999) 10]];
+[X_norm, mu, sigma] = featureNormalize(X);
+% pca takes a really long time with m=n=5000, I timed it at 22 minutes
+[U, S] = pca(X_norm);
+K = 2;
+Z = projectData(X_norm, U, K);
+save z.txt Z
+% The anomaly still doesn't show.
+X_rec  = recoverData(Z, U, K);
+[x, ix] = max(max(X_rec))
+% And it still isn't picked up by the maximum column maxima.
+% x =  0.41446
+% ix =  917
+
+
+% Perhaps if PCA is applied iteratively with some maximum reduction each time?
+% What's the most number of features in which an anomaly in one feature would stick out
+% when reduced to 2 dimensions?
+X = stdnormal_rnd(100, 100);
+X = [X; [stdnormal_rnd(1,99) 10]];
+[X_norm, mu, sigma] = featureNormalize(X);
+[U, S] = pca(X_norm);
+K = 2;
+Z = projectData(X_norm, U, K);
+save z.txt Z
+% Does the anomaly show? Yes it does!
+X_rec  = recoverData(Z, U, K);
+[x, ix] = max(max(X_rec))
+% x =  1.8015
+% ix =  60
+% Although running it a second time seems less convincing
+% x =  1.3693
+% ix =  8
+% And regardless, the index of the reconstructed data is not informative with regard to
+% which feature from the original data contains the anomalous datapoint.
+
+
+% Is the anomaly picked up by the maximum column maxima?
+% It seems to be, but I suppose I shouldn't've been surprised to see it now at a different
+% index post-reconstruction.
+
+
+-

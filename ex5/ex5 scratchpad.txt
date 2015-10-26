@@ -1,0 +1,42 @@
+% Exercise 5 Scratchpad
+
+
+load ('ex5data1.mat');
+m = size(X, 1);
+theta = [1 ; 1];
+% X = [ones(m, 1), X];
+lambda = 1;
+[J grad] = linearRegCostFunction(X, y, theta, lambda);
+
+
+X_s = [ones(10,1) sin(1:1.5:15)' cos(1:1.5:15)'];
+y_s = sin(1:3:30)';
+theta_s = [0.1 0.2 0.3]';
+[J grad] = linearRegCostFunction(X_s, y_s, [0.1 0.2 0.3]', 0.5);
+
+
+((theta_s(1) * X_s(:,1)) + (X_s(:,2:end) * theta_s(2:end))) - y_s
+
+i = 6;
+trainLinearReg(X(1:i,:), y(1:i), lambda)
+
+linearRegCostFunction(X(1:i,:), y(1:i), trainLinearReg(X(1:i,:), y(1:i), lambda), 0)
+
+[error_train, error_val] = learningCurve(X, y, Xval, yval, lambda)
+
+for i=1:10 linearRegCostFunction([ones(size(Xval, 1), 1) Xval], yval, ...
+	trainLinearReg([ones(size(Xval, 1), 1) Xval], yval, lambda), 0) end;
+	
+linearRegCostFunction([ones(size(Xval, 1), 1) Xval], yval, [0; theta_val], 0);
+
+i = 3;
+[J grad] = linearRegCostFunction([ones(size(X, 1), 1) X], y, theta, lambda)
+theta_train = [0; trainLinearReg([ones(i, 1) X(1:i,:)], y(1:i), lambda)];
+error_train = linearRegCostFunction([ones(i, 1) X(1:i,:)], y(1:i), theta_train, 0);
+error_val = linearRegCostFunction([ones(size(Xval,1),1) Xval], yval, theta_train, 0);
+
+[J grad]=linearRegCostFunction([ones(size(X,1),1) X],y,[1;1],1)
+
+plot(lambda_vec, error_train, lambda_vec, [18; 18; error_val(3:end)]);
+
+linearRegCostFunction(Xtest, ytest, _, 3)
